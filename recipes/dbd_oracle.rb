@@ -25,6 +25,9 @@ cpan_module "DBD::Oracle" do
 
   environment({
     "LD_LIBRARY_PATH" => node[:oracle_instantclient][:path],
-    "ORACLE_HOME" => node[:oracle_instantclient][:path],
+
+    # LD_RUN_PATH seems to be needed for DBD::Oracle to work through Apache on
+    # Redhat.
+    "LD_RUN_PATH" => node[:oracle_instantclient][:path],
   })
 end
