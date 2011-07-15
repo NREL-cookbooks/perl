@@ -9,4 +9,6 @@
 
 include_recipe "perl"
 
+package "perl-YAML"
+package "perl-Test-Simple"
 cpan_module "Data::Random"
