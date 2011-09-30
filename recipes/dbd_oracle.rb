@@ -11,8 +11,8 @@ include_recipe "perl::dbi"
 include_recipe "oracle_instantclient"
 
 dependencies = value_for_platform({
-  ["redhat", "centos", "fedora"] => { "default" => ["libaio", "perl-Test-Simple"] },
-  "default" => { "default" => ["libaio1"] },
+  ["redhat", "centos", "fedora"] => { "default" => ["perl-Test-Simple"] },
+  "default" => { "default" => [] },
 })
 
 dependencies.each do |package_name|
