@@ -17,12 +17,8 @@
 # limitations under the License.
 #
 
-define :cpan_module, :force => nil, :environment => {} do
+define :cpan_module, :force => nil do
   execute "install-#{params[:name]}" do
-    params[:environment].each do |env_var,value|
-      ENV[env_var] = value
-    end
-
     if params[:force] 
       command "echo force install #{params[:name]} | /usr/bin/cpan"
     else

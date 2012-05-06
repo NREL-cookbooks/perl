@@ -17,17 +17,41 @@
 # limitations under the License.
 #
 
-packages = value_for_platform({
-  ["redhat", "centos", "fedora"] => { "default" => ["perl", "perl-CPAN", "perl-libwww-perl"] },
-  "arch" => { "default" => ["perl", "perl-libwww"] },
-  "default" => { "default" => ["perl", "libwww-perl"] },
-})
+package "perl" do
+  action :upgrade
+end
 
-packages.each do |package|
-  package package do
+if %w{redhat centos fedora scientific oracle amazon}.include?(node['platform'])
+  package "perl-CPAN" do
     action :upgrade
   end
 end
+
+libwww_perl = case node[:platform]
+  when "redhat","centos","fedora","scientific","oracle","amazon"
+    "perl-libwww-perl"
+  when "arch"
+    "perl-libwww"
+  when "debian","ubuntu","mint"
+    "libwww-perl"
+  end
+
+package libwww_perl do
+  action :upgrade
+end
+
+libperl_dev = case node[:platform]
+  when "redhat","centos","fedora","scientific","oracle","amazon"
+    "perl-devel"
+  when "ubuntu","debian","mint" 
+    "libperl-dev"
+  when "arch"
+    nil
+  end
+
+package libperl_dev do
+  action :upgrade
+end unless libperl_dev.nil?
 
 directory "/root/.cpan" do
   owner "root"
@@ -36,23 +60,30 @@ directory "/root/.cpan" do
 end
 
 cookbook_file "CPAN-Config.pm" do
-  case node[:platform]
-  when "centos","redhat"
-    path "/usr/share/perl5/CPAN/Config.pm"
-  when "arch"
-    path "/usr/share/perl5/core_perl/CPAN/Config.pm"
-  else
-    path "/etc/perl/CPAN/Config.pm"
-  end
+  path case node[:platform]
+    when "redhat","centos","scientific","oracle"
+      if node[:platform_version].to_f >= 6
+        "/usr/share/perl5/CPAN/Config.pm"
+      else
+        "/usr/lib/perl5/#{node[:languages][:perl][:version]}/CPAN/Config.pm"
+      end
+    when "amazon","fedora"
+      # FIXME: need platform_version tests for fedora and amazon
+      "/usr/share/perl5/CPAN/Config.pm"
+    when "arch"
+      "/usr/share/perl5/core_perl/CPAN/Config.pm"
+    when "debian","ubuntu","mint"
+      "/etc/perl/CPAN/Config.pm"
+    end
   source "Config-#{node[:languages][:perl][:version]}.pm"
   owner "root"
   group "root"
-  mode "0644"
+  mode 0644
 end
 
 cookbook_file "/usr/local/bin/cpan_install" do
   source "cpan_install"
   owner "root"
   group "root"
-  mode "0755"
+  mode 0755
 end
