@@ -7,8 +7,6 @@
 # All rights reserved - Do Not Redistribute
 #
 
-include_recipe "perl"
+include_recipe "yum::rpmforge"
 
-package "perl-YAML"
-package "perl-Test-Simple"
-cpan_module "Data::Random"
+package "perl-Data-Random"
