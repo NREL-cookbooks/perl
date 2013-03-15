@@ -28,4 +28,8 @@ ENV["LD_RUN_PATH"] = node[:oracle_instantclient][:path]
 cpan_module "DBD::Oracle" do
   # Tests fail, since it can't connect to a dummy Oracle database, but we don't care.
   force true
+
+  if node[:perl][:dbd_oracle][:version]
+    version node[:perl][:dbd_oracle][:version]
+  end
 end

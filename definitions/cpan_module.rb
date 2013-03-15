@@ -18,17 +18,28 @@
 #
 
 define :cpan_module, :force => nil do
-  execute "install-#{params[:name]}" do
+  install_name = params[:name]
+  if params[:version]
+    install_name += "@#{params[:version]}"
+  end
+
+  execute "install-#{install_name}" do
     if params[:force]
-      command "#{node['perl']['cpanm']['path']} --force #{params[:name]}"
+      command "#{node['perl']['cpanm']['path']} --force #{install_name}"
     else
-      command "#{node['perl']['cpanm']['path']} #{params[:name]}"
+      command "#{node['perl']['cpanm']['path']} #{install_name}"
     end
     root_dir = (node[:platform] == "mac_os_x") ? "/var/root" : "/root"
     cwd root_dir
     # Will create working dir on /root/.cpanm (or /var/root)
     environment "HOME" => root_dir
     path [ "/usr/local/bin", "/usr/bin", "/bin" ]
-    not_if "perl -m#{params[:name]} -e ''"
+
+    version_test = ""
+    if params[:version]
+      version_test = " && perl -M#{params[:name]} -le 'print $#{params[:name]}::VERSION' | grep '^#{::Regexp.escape(params[:version])}$'"
+    end
+
+    not_if "perl -m#{params[:name]} -e ''#{version_test}"
   end
 end
