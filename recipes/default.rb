@@ -24,9 +24,14 @@ unless node['platform'] == 'windows'
 
 	cpanm = node['perl']['cpanm'].to_hash
 	root_group = (node[:platform] == "mac_os_x") ? "admin" : "root"
-	remote_file cpanm['path'] do
-	  source cpanm['url']
-	  checksum cpanm['checksum']
+	# FIXME: Temporarily switch to a local cookbook file instead of fetching this
+	# script remotely. This works around the current issues with fetching HTTPS
+	# resources from the omnibus-based chef installs: 
+	# http://tickets.opscode.com/browse/CHEF-2840
+	#remote_file cpanm['path'] do
+	#  source cpanm['url']
+	#  checksum cpanm['checksum']
+	cookbook_file cpanm['path'] do
 	  owner "root"
 	  group root_group
 	  mode 0755
