@@ -7,6 +7,6 @@
 # All rights reserved - Do Not Redistribute
 #
 
-include_recipe "yum::repoforge"
+include_recipe "yum-repoforge"
 
 package "perl-Data-Random"
