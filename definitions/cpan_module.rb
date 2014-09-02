@@ -23,6 +23,8 @@ define :cpan_module, :force => nil do
     install_name += "@#{params[:version]}"
   end
 
+  params[:environment] ||= {}
+
   execute "install-#{install_name}" do
     if params[:force]
       command "#{node['perl']['cpanm']['path']} --force #{install_name}"
@@ -32,7 +34,7 @@ define :cpan_module, :force => nil do
     root_dir = (node[:platform] == "mac_os_x") ? "/var/root" : "/root"
     cwd root_dir
     # Will create working dir on /root/.cpanm (or /var/root)
-    environment "HOME" => root_dir
+    environment(params[:environment].merge("HOME" => root_dir))
     path [ "/usr/local/bin", "/usr/bin", "/bin" ]
 
     version_test = ""
