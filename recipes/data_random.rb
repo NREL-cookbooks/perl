@@ -9,4 +9,6 @@
 
 include_recipe "yum::repoforge"
 
-package "perl-Data-Random"
+package "perl-Data-Random" do
+  options "--enablerepo=rpmforge"
+end
