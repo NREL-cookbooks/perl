@@ -1,49 +1,91 @@
-Description
-===========
+# perl Cookbook
 
-Manages Perl installation and provides `cpan_module`, to install modules
-from... CPAN.
+[![Build Status](https://travis-ci.org/chef-cookbooks/perl.svg?branch=master)](http://travis-ci.org/chef-cookbooks/perl) [![Cookbook Version](https://img.shields.io/cookbook/v/perl.svg)](https://supermarket.chef.io/cookbooks/perl)
 
-Requirements
-============
+Manages Perl installation and provides `cpan_module`, to install modules from... CPAN.
 
-## Platform:
+## Requirements
 
-* Debian/Ubuntu/Mint
-* RHEL/CentOS/Scientific/Oracle/Fedora
-* ArchLinux
-* Windows
+### Platforms
 
-Attributes
-==========
+- Debian/Ubuntu/Mint
+- RHEL/CentOS/Scientific/Amazon/Oracle
+- Fedora
+- ArchLinux
+- Windows
 
-  * perl\['packages'\] - platform specific packages installed by default recipe
+### Chef
 
-  * perl\['cpanm'\]\['path'\] - platform specific path for `cpanm` binary to live
+- Chef 11+
 
-  * perl\['cpanm'\]\['url'\] - URL to download cpanm script from
+### Cookbooks
 
-  * perl\['cpanm'\]\['checksum'\] - checksum for the above remote file
+- windows
 
-Usage
-=====
+## Attributes
+
+- perl['packages'] - platform specific packages installed by default recipe
+- perl['cpanm']['path'] - platform specific path for `cpanm` binary to live
+- perl['cpanm']['url'] - URL to download cpanm script from
+- perl['cpanm']['checksum'] - checksum for the above remote file
+
+## Usage
 
 To install a module from CPAN:
 
-    cpan_module "App::Munchies"
+```ruby
+cpan_module 'App::Munchies'
+```
 
 Optionally, installation can forced with the 'force' parameter.
 
-    cpan_module "App::Munchies"
-      force true
-    end
+```ruby
+cpan_module 'App::Munchies'
+  force true
+end
+```
 
-License and Author
-==================
+You can also use [cpanm's version mechanism](http://search.cpan.org/~miyagawa/App-cpanminus-1.7027/bin/cpanm#COMMANDS) to grab a specific version, or glob a version.
 
-Author:: Joshua Timberman (<joshua@opscode.com>)
-Copyright:: 2009, Opscode, Inc.
+Exactly version 1.01 of `App::Munchies` will be installed:
 
+```ruby
+cpan_module 'App::Munchies'
+  version '== 1.01'
+end
+```
+
+At least version 1.01 of `App::Munchies` will be installed:
+
+```ruby
+cpan_module 'App::Munchies'
+  version '1.01'
+end
+```
+
+At least version 1.01 will be installed, but not version 2:
+
+```ruby
+cpan_module 'App::Munchies'
+  version '>= 1.01, < 2.0'
+end
+```
+
+Additionally, you can use the `cpan_module` LWRP to delete a given package (uses cpanm's `--uninstall` param)
+
+```ruby
+cpan_module 'App::Munchies'
+  action :uninstall
+end
+```
+
+## License & Authors
+
+**Author:** Cookbook Engineering Team ([cookbooks@chef.io](mailto:cookbooks@chef.io))
+
+**Copyright:** 2009-2015, Chef Software, Inc.
+
+```
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -55,4 +97,4 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
+```
