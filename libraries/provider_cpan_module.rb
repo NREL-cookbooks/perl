@@ -20,7 +20,7 @@ class Chef
         execute "CPAN :install #{new_resource.name}" do
           cwd current_working_dir
           command cpanm_install_cmd
-          environment 'HOME' => current_working_dir, 'PATH' => '/usr/local/bin:/usr/bin:/bin'
+          environment({'HOME' => current_working_dir, 'PATH' => '/usr/local/bin:/usr/bin:/bin'}.merge(new_resource.environment))
           not_if { module_exists_new_enough }
         end
       end
